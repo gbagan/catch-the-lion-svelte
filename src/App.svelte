@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { condition2Win, type Config, drawGame, initPieces, initState } from './model';
+  import { condition2Win, type Config, type Played, drawGame, initPieces, newConfig } from './model';
   import { delay } from './util';
   import { tutorial } from './tutorial';
   import Worker from './worker?worker';
@@ -9,17 +9,24 @@
   import Rules from './components/Rules.svelte';
   import Credits from './components/Credits.svelte';
 
-  let dialog: HTMLDialogElement = $state()!;
+  let pieces =  $state(initPieces());
+  let turn: 0 | 1 = $state(0);
+  let outcome: 0 | 1 | 2 | null = $state(null);
+  let played: Played = $state([]);
+  let config = $state(newConfig());
+  let isThinking = $state(false);
+  let dialog: "newgame" | "rules" | "credits" | null = $state(null);
+  let tutorialStep: number | null = $state(null);
+
+  let dialogEl: HTMLDialogElement = $state()!;
   let moveAudio: HTMLAudioElement = $state()!;
   let captureAudio: HTMLAudioElement = $state()!;
 
-  let st = $state(initState());
-
   const requiredMove = $derived.by(() => {
-    if (st.tutorialStep === null) {
+    if (tutorialStep === null) {
       return null
     }
-    const action = tutorial[st.tutorialStep].action;
+    const action = tutorial[tutorialStep].action;
     return action.type === "playerAction" ? [action.from, action.to] as [number, number] : null
   });
 
@@ -32,168 +39,166 @@
     });
 
   const playAux = (from: number, to: number) => {
-    const { owner, type, position } = st.pieces[from];
-    const fromPos = st.pieces[from].position;
-    const piecesCopy = st.pieces.map(x => ({ ...x}));
-    st.played.push({ pieces: piecesCopy, move: [fromPos, to] });
-    const j = st.pieces.findIndex(x => x.position === to);
+    const { owner, type, position } = pieces[from];
+    const fromPos = pieces[from].position;
+    const piecesCopy = pieces.map(x => ({ ...x}));
+    played.push({ pieces: piecesCopy, move: [fromPos, to] });
+    const j = pieces.findIndex(x => x.position === to);
     if (j >= 0) {
       captureAudio.play();
-      st.pieces[j].position = null;
-      st.pieces[j].owner = owner;
-      if (st.pieces[j].type === "H") {
-        st.pieces[j].type = "C";
+      pieces[j].position = null;
+      pieces[j].owner = owner;
+      if (pieces[j].type === "H") {
+        pieces[j].type = "C";
       } 
-      if (st.pieces[j].type === 'L') {
-        st.outcome = owner;
+      if (pieces[j].type === 'L') {
+        outcome = owner;
       }
     } else {
       moveAudio.play();
     }
-    st.pieces[from].position = to;
+    pieces[from].position = to;
     if (type === 'C' && position !== null && (owner && to > 8 || !owner && to < 3)) {
-      st.pieces[from].type = 'H';
+      pieces[from].type = 'H';
     }
-    if (condition2Win(st.pieces, st.turn)) {
-      st.outcome = st.turn;
+    if (condition2Win(pieces, turn)) {
+      outcome = turn;
     }
-    if (drawGame(st.pieces, st.played)) { 
-      st.outcome = 2;
+    if (drawGame(pieces, played)) { 
+      outcome = 2;
     }
-    st.turn = st.turn === 0 ? 1 : 0;
+    turn = turn === 0 ? 1 : 0;
   }
 
   const machinePlays = async () => {
     const data = {
-      pieces: st.pieces.map(x => ({ ...x })),
-      turn: st.turn,
-      adversary: st.config.adversary,
-      played: st.played.map(x => x.pieces.map(y => ({ ...y })))
+      pieces: pieces.map(x => ({ ...x })),
+      turn: turn,
+      adversary: config.adversary,
+      played: played.map(x => x.pieces.map(y => ({ ...y })))
     };
     const [[from2, to2]] = await Promise.all([workerTask(data), delay(1500)]);
-    st.isThinking = false;
+    isThinking = false;
     playAux(from2, to2);
   }
 
   const play = async (from: number, to: number) => {
-    if (st.config.adversary === 'human') {
+    if (config.adversary === 'human') {
       playAux(from, to)
     } else {
       playAux(from, to)
-      if (st.outcome === null) {
-        st.isThinking = true;
+      if (outcome === null) {
+        isThinking = true;
         await machinePlays();
       }
     }
   }
       
   const undo = () => {
-    if (st.isThinking) {
+    if (isThinking) {
       return
     }
 
-    if (st.played.length > 1 || st.played.length === 1 && st.config.adversary === 'human') {
-      const pieces = st.played.pop()!.pieces;
-      st.pieces = pieces
-      st.turn = st.turn === 0 ? 1 : 0
-      st.outcome = null
+    if (played.length > 1 || played.length === 1 && config.adversary === 'human') {
+      pieces = played.pop()!.pieces;
+      turn = turn === 0 ? 1 : 0
+      outcome = null
     }
-    const parity = st.played.length % 2 === 0;
+    const parity = played.length % 2 === 0;
 
-    if (st.config.adversary !== 'human' && parity === st.config.machineStarts) {
-      const pieces = st.played.pop()!.pieces;
-      st.pieces = pieces
-      st.turn = st.turn === 0 ? 1 : 0
+    if (config.adversary !== 'human' && parity === config.machineStarts) {
+      pieces = played.pop()!.pieces;
+      turn = turn === 0 ? 1 : 0
     }
   }
 
   const openNewGameDialog = () => {
-    if (st.isThinking) {
+    if (isThinking) {
       return;
     }
-    st.dialog = "newgame";
-    dialog.showModal();
+    dialog = "newgame";
+    dialogEl.showModal();
   }
 
   const openRulesDialog = () => {
-    st.dialog = "rules";
-    dialog.showModal()
+    dialog = "rules";
+    dialogEl.showModal()
   }
 
   const openCreditsDialog = () => {
-    st.dialog = "credits";
-    dialog.showModal();
+    dialog = "credits";
+    dialogEl.showModal();
   }
 
   const closeDialog = () => {
-    dialog.close();
-    st.dialog = null;
+    dialogEl.close();
+    dialog = null;
   }
 
   const newGame = (config: Config) => {
-    st.config = { ...config }
-    st.pieces = initPieces()
-    st.played = []
-    st.outcome = null
-    st.turn = st.config.machineStarts ? 1 : 0
-    st.isThinking = st.config.machineStarts
-    st.dialog = null
-    st.tutorialStep = null
-    dialog.close()
-    if (st.config.machineStarts && st.config.adversary !== "human") {
+    config = { ...config }
+    pieces = initPieces()
+    played = []
+    outcome = null
+    turn = config.machineStarts ? 1 : 0
+    isThinking = config.machineStarts
+    dialog = null
+    tutorialStep = null
+    dialogEl.close()
+    if (config.machineStarts && config.adversary !== "human") {
       machinePlays()
     }
   }
 
   const startTutorial = () => {
-    if (st.isThinking) {
+    if (isThinking) {
       return
     }
-    st.pieces = initPieces();
-    st.played = [];
-    st.outcome = null;
-    st.turn = 0;
-    st.isThinking = false;
-    st.dialog = null;
-    st.tutorialStep = 0;
+    pieces = initPieces();
+    played = [];
+    outcome = null;
+    turn = 0;
+    isThinking = false;
+    dialog = null;
+    tutorialStep = 0;
   }
 
   const tutorialPred = () => {
-   if (st.tutorialStep === null) {
+   if (tutorialStep === null) {
       return
     }
-    st.tutorialStep = Math.max(0, st.tutorialStep - 1);
-    if (tutorial[st.tutorialStep!].action.type !== 'read') {
-      st.pieces = st.played.pop()!.pieces;
-      st.turn = st.turn === 1 ? 0 : 1;
+    tutorialStep = Math.max(0, tutorialStep - 1);
+    if (tutorial[tutorialStep!].action.type !== 'read') {
+      pieces = played.pop()!.pieces;
+      turn = turn === 1 ? 0 : 1;
     }
   }
 
   const tutorialNext = () => {
-    if (st.tutorialStep === null) {
+    if (tutorialStep === null) {
       return
     }
-    const action = tutorial[st.tutorialStep].action;
+    const action = tutorial[tutorialStep].action;
     if (action.type === 'playerAction') {
       return
     }
     if (action.type === 'machineAction') {
       playAux(action.from, action.to);
     }
-    st.tutorialStep = Math.min(tutorial.length - 1, st.tutorialStep + 1);
+    tutorialStep = Math.min(tutorial.length - 1, tutorialStep + 1);
   }
 
 
   const tutorialPlay = (from: number, to: number) => {
-    if (st.tutorialStep === null) {
+    if (tutorialStep === null) {
       return
     }
-    const required = tutorial[st.tutorialStep].action;
+    const required = tutorial[tutorialStep].action;
     if (required.type !== 'playerAction' || from !== required.from || to !== required.to) {
       return
     }
     playAux(from, to);
-    st.tutorialStep = Math.min(tutorial.length - 1, st.tutorialStep + 1);
+    tutorialStep = Math.min(tutorial.length - 1, tutorialStep + 1);
   }
 </script>
 
@@ -209,44 +214,44 @@
     <button class="btn" onclick={openRulesDialog}>Règles</button>
     <button class="btn" onclick={openCreditsDialog}>Crédits</button>
   </div>
-  {#if st.tutorialStep === null}
+  {#if tutorialStep === null}
     <Board
-      pieces={st.pieces}
-      turn={st.turn}
-      lastMove={st.played.at(-1)?.move ?? null}
-      canPlay={!st.isThinking && st.outcome === null}
+      pieces={pieces}
+      turn={turn}
+      lastMove={played.at(-1)?.move ?? null}
+      canPlay={!isThinking && outcome === null}
       requiredMove={null}
       play={play}
     />
   {:else}
     <Board
-      pieces={st.pieces}
-      turn={st.turn}
-      lastMove={st.played.at(-1)?.move ?? null}
-      canPlay={tutorial[st.tutorialStep].action.type === 'playerAction'}
+      pieces={pieces}
+      turn={turn}
+      lastMove={played.at(-1)?.move ?? null}
+      canPlay={tutorial[tutorialStep].action.type === 'playerAction'}
       requiredMove={requiredMove}
       play={tutorialPlay}
     />
   {/if}
   <Info
-    outcome={st.outcome}
-    isThinking={st.isThinking}
-    adversary={st.config.adversary}
-    tutorialStep={st.tutorialStep}
+    outcome={outcome}
+    isThinking={isThinking}
+    adversary={config.adversary}
+    tutorialStep={tutorialStep}
     tutorialNext={tutorialNext}
     tutorialPred={tutorialPred}
   />
 </div>
-<dialog class="dialog" bind:this={dialog}>
-  {#if st.dialog === "newgame"}
+<dialog class="dialog" bind:this={dialogEl}>
+  {#if dialog === "newgame"}
     <NewGame
-      config={st.config}
+      config={config}
       closeDialog={closeDialog}
       newGame={newGame}
     />
-  {:else if st.dialog === "rules"}
+  {:else if dialog === "rules"}
     <Rules closeDialog={closeDialog} />
-  {:else if st.dialog === "credits"}
+  {:else if dialog === "credits"}
     <Credits closeDialog={closeDialog} />
   {/if}
 </dialog>

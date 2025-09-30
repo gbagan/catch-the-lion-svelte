@@ -54,7 +54,7 @@
 
   onDestroy(() => stop = true);
 
-  let message: Message = $derived(
+  let message: Message | null = $derived(
     tutorialStep !== null
     ? tutorial[tutorialStep].text
     : outcome === null
@@ -80,6 +80,7 @@
     : "bg-speaking"
   );
   // todo ajouter transitions
+  // ajouter les mots en gras
 </script>
 
 <div class="z-20 relative w-[15rem] h-[25rem] bg-contain bg-no-repeat {girlExpression}">

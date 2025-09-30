@@ -17,18 +17,7 @@ export type Config = {
   machineStarts: boolean,
 }
 
-type Played = {pieces: Piece[], move: [number | null, number]}[];
-
-export type State = {
-  pieces: Piece[],
-  config: Config,
-  turn: 0 | 1,
-  outcome: 0 | 1 | 2 | null,
-  isThinking: boolean,
-  played: Played,
-  dialog: "newgame" | "rules" | "credits" | null,
-  tutorialStep: null | number,
-}
+export type Played = {pieces: Piece[], move: [number | null, number]}[];
 
 export type Message = (String | ["R" | "G" | "B", string])[]
 
@@ -47,17 +36,6 @@ export const initPieces = (): Piece[] => [
   { type: 'G', position: 0, owner: 1 },
   { type: 'C', position: 4, owner: 1 },
 ];
-
-export const initState = (): State => ({
-  pieces: initPieces(),
-  turn: 0,
-  outcome: null,
-  played: [],
-  config: newConfig(),
-  isThinking: false,
-  dialog: null,
-  tutorialStep: null,
-});
 
 export const movesDict: Record<PieceType, [number, number][]> = ({
   C: [[0, 1]],
