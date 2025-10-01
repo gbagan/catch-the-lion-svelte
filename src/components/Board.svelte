@@ -207,7 +207,7 @@
         href="#twice"
         width="50"
         height="50"
-        opacity={ownBothPieces(i, 0) ? 1 : 0}
+        opacity={ownBothPieces(i, 1) ? 1 : 0}
         style:transform="translate(1540px, {240 + 200 * j}px)"
       />
     {/each}

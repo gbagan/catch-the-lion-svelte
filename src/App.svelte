@@ -136,16 +136,16 @@
     dialog = null;
   }
 
-  const newGame = (config: Config) => {
-    config = { ...config }
-    pieces = initPieces()
-    played = []
-    outcome = null
-    turn = config.machineStarts ? 1 : 0
-    isThinking = config.machineStarts
-    dialog = null
-    tutorialStep = null
-    dialogEl.close()
+  const newGame = (config2: Config) => {
+    config = { ...config2 };
+    pieces = initPieces();
+    played = [];
+    outcome = null;
+    turn = config.machineStarts ? 1 : 0;
+    isThinking = config.machineStarts;
+    dialog = null;
+    tutorialStep = null;
+    dialogEl.close();
     if (config.machineStarts && config.adversary !== "human") {
       machinePlays()
     }

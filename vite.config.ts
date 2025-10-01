@@ -16,7 +16,19 @@ export default defineConfig({
         scope: '/catch-the-lion/',
         display: 'standalone',
         background_color: '#ffffff',
-        theme_color: '#0000ff'
+        theme_color: '#0000ff',
+        icons: [
+          {
+            src: '/incidence/icons/icon192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: '/incidence/icons/icon512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          },
+        ]
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,webm,webp}']

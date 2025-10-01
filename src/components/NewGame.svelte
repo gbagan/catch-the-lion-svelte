@@ -25,7 +25,7 @@
 <Dialog
   title="Nouvelle Partie"
   onCancel={closeDialog}
-  onOk={() => newGame(config)}
+  onOk={() => newGame(config2)}
 >
   <div class="container">
     <div class="title">Adversaire</div>
