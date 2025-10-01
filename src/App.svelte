@@ -314,9 +314,6 @@
 
   dialog {
     display: block;
-    position: absolute;
-    left: 50%;
-    top: 50%;
     border: none;
     background-image: var(--bg-board);
     border-radius: 0.5rem;
@@ -340,11 +337,11 @@
   @keyframes flip-y {
     0% { 
       opacity: 0;
-      transform: translate(-50%, -50%) rotateY(180deg);
+      transform: rotateY(180deg);
     }
     100% { 
       opacity: 1;
-      transform: translate(-50%, -50%) rotateY(0);
+      transform: rotateY(0);
     }
   }
 </style>
