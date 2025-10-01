@@ -36,7 +36,22 @@
   {x1} {x2} {y1} {y2}
   stroke="red"
   stroke-width="50"
-  class="pointer-events-none animate-lion-arrow"
+  class="arrow"
   marker-end="url(#arrowhead)"
 />
 
+<style>
+  .arrow {
+    pointer-events: none;
+    animation: arrow 2000ms linear infinite;
+  }
+
+  @keyframes arrow {
+    0%, 100% { 
+      opacity: 0.7;
+    }
+    50% { 
+      opacity: 0;
+    }
+  }
+</style>

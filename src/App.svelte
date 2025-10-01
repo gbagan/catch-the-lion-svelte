@@ -8,6 +8,7 @@
   import NewGame from './components/NewGame.svelte';
   import Rules from './components/Rules.svelte';
   import Credits from './components/Credits.svelte';
+    import Button from './components/Button.svelte';
 
   let pieces =  $state(initPieces());
   let turn: 0 | 1 = $state(0);
@@ -204,15 +205,15 @@
 
 <audio src="./move.webm" preload="auto" bind:this={moveAudio}></audio>
 <audio src="./capture.webm" preload="auto" bind:this={captureAudio}></audio>
-<div class="relative w-screen min-h-screen bg-main bg-cover bg-no-repeat flex flew-row items-center justify-around portrait:flex-col">
-  <div class="absolute bg-white w-full h-full opacity-30 z-10 pointer-events-none"></div>
-  <div class="flex flex-col bg-board b-cover p-6 border-2 border-black rounded-xl gap-4 z-20">
-    <div class="text-4xl">Catch the lion</div>
-    <button class="btn" onclick={openNewGameDialog}>Nouvelle partie</button>
-    <button class="btn" onclick={undo}>Annuler</button>
-    <button class="btn" onclick={startTutorial}>Tutoriel</button>
-    <button class="btn" onclick={openRulesDialog}>Règles</button>
-    <button class="btn" onclick={openCreditsDialog}>Crédits</button>
+<div class="wrap">
+  <div class="lighter"></div>
+  <div class="board">
+    <div class="title">Catch the lion</div>
+    <Button onclick={openNewGameDialog}>Nouvelle partie</Button>
+    <Button onclick={undo}>Annuler</Button>
+    <Button onclick={startTutorial}>Tutoriel</Button>
+    <Button onclick={openRulesDialog}>Règles</Button>
+    <Button onclick={openCreditsDialog}>Crédits</Button>
   </div>
   {#if tutorialStep === null}
     <Board
@@ -242,7 +243,7 @@
     tutorialPred={tutorialPred}
   />
 </div>
-<dialog class="dialog" bind:this={dialogEl}>
+<dialog bind:this={dialogEl}>
   {#if dialog === "newgame"}
     <NewGame
       config={config}
@@ -255,3 +256,95 @@
     <Credits closeDialog={closeDialog} />
   {/if}
 </dialog>
+
+<style>
+  .wrap {
+    position: relative;
+
+    width: 100vw;
+    min-height: 100vh;
+
+    background-image: var(--bg-main);
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  @media (orientation: portrait) {
+    .wrap {
+      flex-direction: column;
+    }
+  }
+
+  .lighter {
+    position: absolute;
+    background-color: #ffffff;
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .board {
+    display: flex;
+    flex-direction: column;
+
+    background-image: var(--bg-board);
+
+    padding: 1.5rem;
+
+    border-width: 2px; 
+    border-style: solid;
+    border-color: black;
+    border-radius: 1rem;
+
+    gap: 1rem;
+    z-index: 20;
+  }
+
+  .title {
+    font-size: 2.25rem;    /* text-4xl = 36px */
+    line-height: 2.5rem;   /* line-height par défaut pour text-4xl */
+  }
+
+  dialog {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border: none;
+    background-image: var(--bg-board);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 
+                0 1px 2px -1px rgb(0 0 0 / 0.1);
+
+    &::backdrop {
+      background-color: rgba(107, 114, 128, 0.7);
+    }
+    
+    &:not([open]) {
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    &[open] {
+      animation: flip-y 1s both;
+    }
+  }
+
+  @keyframes flip-y {
+    0% { 
+      opacity: 0;
+      transform: translateX(-50%) translateY(-50%) rotateY(180deg);
+    }
+    100% { 
+      opacity: 1;
+      transform: translateX(-50%) translateY(-50%) rotateY(0);
+    }
+  }
+</style>

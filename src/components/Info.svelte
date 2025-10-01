@@ -71,20 +71,20 @@
 
   let girlExpression = $derived(
     isThinking
-    ? "bg-thinking"
+    ? "thinking"
     : outcome === 2
-    ? "bg-surprised"
+    ? "surprised"
     : outcome !== null && outcome === 0 && adversary !== 'human'
-    ? "bg-crying"
+    ? "crying"
     : outcome !== null && (outcome === 1 || adversary === 'human')
-    ? "bg-happy"
-    : "bg-speaking"
+    ? "happy"
+    : "speaking"
   );
 </script>
 
-<div class="z-20 relative w-[15rem] h-[25rem] bg-contain bg-no-repeat {girlExpression}">
+<div class="girl {girlExpression}">
   {#if message}
-    <div class="tooltip -right-5" transition:fade={{duration: 500}}>
+    <div class="tooltip" transition:fade={{duration: 500}}>
       {#each message as m}
         {#if typeof m === "string"}
           {m}
@@ -99,9 +99,113 @@
     </div>
   {/if}
   {#if tutorialStep !== null}
-    <div class="absolute -right-2 flex gap-32">
+    <div class="tutorial-buttons">
       <button class="tutorial-button" onclick={tutorialPred}>Précédent</button>
       <button class="tutorial-button" onclick={tutorialNext}>Suivant</button>
     </div>
   {/if}
 </div>
+
+<style>
+  .tooltip {
+    background-color: #ffffff;
+    position: absolute;
+    right: -1.25rem;
+    bottom: 100%;
+
+    text-align: center;
+    border-radius: 0.75rem;
+
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    margin-bottom: 1rem;
+    width: 24rem;
+
+    transition-property: opacity;
+    transition-duration: 500ms;
+  
+    &::after {
+      position: absolute; 
+      border-width: 8px;
+      top: 100%;
+      left: 60%;
+      margin-left: 0.75rem;
+      content: "";
+
+      border-style: solid; 
+      border-color: transparent;
+      border-top-color: #ffffff;
+    }
+  }
+
+  .tutorial-buttons {
+    position: absolute;
+    right: -0.5rem;
+    display: flex;
+    gap: 8rem;
+  }
+
+  .tutorial-button {
+    padding-top: 0.625rem; 
+    padding-bottom: 0.625rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+
+    color: rgb(17, 24, 39);
+    background-color: #ffffff;
+
+    border-radius: 0.5rem;
+    border: 1px solid rgb(229, 231, 235);
+  
+    outline: none;
+
+    &:hover {
+      background-color: rgb(243, 244, 246);
+      color: rgb(29, 78, 216);
+    }
+
+    &:focus {
+      z-index: 10;
+      box-shadow: 0 0 0 4px rgba(243, 244, 246, 1);
+    }
+  }
+
+  .girl {
+    position: relative;
+    z-index: 20;
+    width: 15rem;
+    height: 25rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+  .thinking {
+    background-image: var(--bg-girl-thinking);
+  }
+
+  .speaking {
+    background-image: var(--bg-girl-speaking);
+  }
+
+  .happy {
+    background-image: var(--bg-girl-happy);
+  }
+
+  .crying {
+    background-image: var(--bg-girl-crying);
+  }
+
+  .surprised {
+    background-image: var(--bg-girl-surprised);
+  }
+
+</style>

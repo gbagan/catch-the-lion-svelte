@@ -1,102 +1,18 @@
-@import "tailwindcss";
-
 :root {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   font-size: 1vmax;
+  --bg-main: url('../background.webp');
+  --bg-board: url('../board4.webp');
+  --bg-girl-speaking: url('../girl_speaking.webp');
+  --bg-girl-thinking: url('../girl_thinking.webp');
+  --bg-girl-happy: url('../girl_happy.webp');
+  --bg-girl-crying: url('../girl_crying.webp');
+  --bg-girl-surprised: url('../girl_surprised.webp');
 }
 
-@theme {
-  --spacing-30: 7.5rem;
-  
-  --background-image-main: url('../background.webp');
-  --background-image-board: url('../board4.webp');
-  --background-image-thinking: url('../girl_thinking.webp');
-  --background-image-happy: url('../girl_happy.webp');
-  --background-image-crying: url('../girl_crying.webp');
-  --background-image-speaking: url('../girl_speaking.webp');
-  --background-image-surprised: url('../girl_surprised.webp');
-  
-  --box-shadow-threat: 0 0 20px red;
-  
-  --animate-flip-y: flip-y 500ms linear forwards;
-  --animate-lion-arrow: lion-arrow 2000ms linear forwards infinite;
-}
-
-@keyframes flip-y {
-  0% { 
-    opacity: 0;
-    transform: rotateY(180deg);
-  }
-  100% { 
-    opacity: 1;
-    transform: rotateY(0);
-  }
-}
-
-@keyframes lion-arrow {
-  0%, 100% { 
-    opacity: 0.7;
-  }
-  50% { 
-    opacity: 0;
-  }
-}
-
-
-@layer components {
-  .btn {
-    @apply
-      px-4 py-2 text-sm font-medium text-gray-700 bg-transparent border border-gray-800
-      hover:bg-yellow-300/50 hover:text-blue-700
-      disabled:opacity-50 disabled:cursor-not-allowed;
-  }
-
-  .togglebtn {
-    @apply px-4 py-2 text-sm font-medium text-gray-700 border border-gray-800;
-  }
-
-  .toggledbtn {
-    @apply bg-yellow-300/50;
-  }
-
-  .dialog {
-    @apply
-      block left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-board rounded-lg shadow backdrop:bg-gray-500/70;
-  }
-
-  .dialog:not([open]) {
-    @apply pointer-events-none opacity-0;
-  }
-  
-  .dialog[open] {
-    @apply animate-flip-y;
-  }
-
-  .dialog-title {
-    @apply p-4 min-h-8 border-b-2 border-black text-4xl font-medium;
-  }
-
-  .dialog-body {
-    @apply p-10 border-black border-b-2;
-  }
-
-  .dialog-buttons {
-    @apply p-4 flex justify-end gap-4;
-  }
-
-  .tooltip {
-    @apply bg-white absolute text-center rounded-xl
-      px-2 py-1 mb-4 w-96
-      bottom-full transition-opacity duration-500;
-  }
-
-  .tooltip::after {
-    @apply absolute border-8 top-full left-[60%] ml-3 content-[""] border-transparent border-t-white;
-  }
-
-  .tutorial-button {
-    @apply py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 
-     bg-white rounded-lg border border-gray-200 
-    hover:bg-gray-100 hover:text-blue-700
-    focus:z-10 focus:ring-4 focus:ring-gray-100 focus:outline-none;
-  }
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
 }

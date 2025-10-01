@@ -1,11 +1,11 @@
 <script lang="ts">
+  import Dialog from "./Dialog.svelte";
   import Emph from "./Emph.svelte"
   type Props = { closeDialog: () => void }
   let {closeDialog }: Props = $props();
 </script>
 
-<div class="dialog-title">Règles de Catch the lion</div>
-<div class="dialog-body">
+<Dialog title="Règles de Catch The Lion" onOk={closeDialog}>
   <ul>
     <li class="list-disc"><Emph>Catch the lion</Emph> est un jeu à deux joueurs sur un plateau 4x3.
       Le but est de capturer le <Emph>lion</Emph> adverse.
@@ -31,9 +31,4 @@
           Le lion ne doit pas pouvoir être immédiatement capturé par l&apos;adversaire.
     </li>
   </ul>
-</div> 
-<div class="dialog-buttons">
-  <button class="btn" onclick={closeDialog}>OK</button>
-</div>
-
-export default Rules
+</Dialog>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Adversary, Config } from "../model";
+  import Dialog from "./Dialog.svelte";
 
   type Props = {
     config: Config
@@ -21,32 +22,72 @@
   }
 </script>
 
-<div class="dialog-title">Nouvelle partie</div>
-<div class="dialog-body grid grid-cols-[20%_80%] gap-8">
-  <div class="text-bold text-lg">Adversaire</div>
-  <div class="flex gap-4">
-    {#each adversaries as [name, fullname]}
-      <button
-        class={["togglebtn", {"toggledbtn": name === config.adversary}]}
-        onclick={() => setAdversary(name)}
-      > 
-        {fullname}
-      </button>
-    {/each}
-  </div>
-  <div class="text-bold text-lg">Qui commence</div>
-  <div class="flex gap-4 text-lg">
-    {#each [false, true] as b}
-      <button
-        class={["togglebtn", {"toggledbtn": b === config.machineStarts}]}
-        onclick={() => setMachineStarts(b)}
-      >
-        {b ? "Machine" : "Humain"}
-      </button>
-    {/each}
-  </div>
-</div>
-<div class="dialog-buttons">
-  <button class="btn" onclick={closeDialog}>Annuler</button>
-  <button class="btn" onclick={() => newGame(config)}>OK</button>
-</div>
+<Dialog
+  title="Nouvelle Partie"
+  onCancel={closeDialog}
+  onOk={() => newGame(config)}
+>
+  <div class="body">
+    <div class="title">Adversaire</div>
+    <div class="buttons">
+      {#each adversaries as [name, fullname]}
+        <button
+          class={{toggled: name === config2.adversary}}
+          onclick={() => setAdversary(name)}
+        > 
+          {fullname}
+        </button>
+      {/each}
+    </div>
+    <div class="title">Qui commence</div>
+    <div class="buttons">
+      {#each [false, true] as b}
+        <button
+          class={{toggled: b === config2.machineStarts}}
+          onclick={() => setMachineStarts(b)}
+        >
+          {b ? "Machine" : "Humain"}
+        </button>
+      {/each}
+    </div>
+  </div>  
+</Dialog>
+
+<style>
+  button {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+
+    color: rgb(55, 65, 81);
+
+    border: 1px solid rgb(31, 41, 55);
+    &.toggled {
+      background-color: rgba(253, 224, 71, 0.5);
+    }
+  }
+
+  .body {
+    display: grid;
+    grid-template-columns: 25% 75%;
+    gap: 2rem;
+  }
+
+  .title {
+    font-weight: bold;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 1rem;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+</style>

@@ -1,11 +1,11 @@
 <script lang="ts">
+  import Dialog from "./Dialog.svelte";
   import Emph from "./Emph.svelte"
   type Props = { closeDialog: () => void }
   let {closeDialog }: Props = $props();
 </script>
 
-<div class="dialog-title">Crédits</div>
-<div class="dialog-body">
+<Dialog title="Crédits" onOk={closeDialog}>
   <ul>
     <li class="list-disc"><Emph>Catch the lion</Emph> est un jeu de plateau créé
       par Madoka Kitao et Maiko Fujita.</li>
@@ -14,8 +14,5 @@
     <li class="list-disc">Le code source est sous licence MIT.</li>
     <li class="list-disc">Les différentes images ont été générées par Dall-E.</li>
     <li class="list-disc">Les différents sons proviennent de la plate-forme Lichess.</li>
-  </ul>
-</div> 
-<div class="dialog-buttons">
-  <button class="btn" onclick={closeDialog}>OK</button>
-</div>
+  </ul>  
+</Dialog>

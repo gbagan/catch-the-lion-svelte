@@ -98,9 +98,8 @@
   }
 </script>
 
-<div class="w-[42rem] z-20">
-  <svg 
-    class="select-none touch-none"
+<div class="container">
+  <svg
     viewBox="0 0 1600 1680"
     bind:this={svgEl}
     onpointermove={handlePointerMove}
@@ -175,7 +174,7 @@
         height={SQUARE_HEIGHT-20}
         stroke-width="20"
         stroke={moves.includes(i) ? "lightgreen" : "transparent"}
-        class={{"pointer-events-none": !moves.includes(i)}}
+        pointer-events={moves.includes(i) ? "" : "none"}
         fill={played(i) ? "rgba(0, 255, 0, 0.3)" : "transparent"}
         onpointerup={e => handlePointerUp(i, e)}
       />
@@ -189,11 +188,9 @@
         height={TILE_SIZE}
         style:transform={transformPiece(piece)}
         href="#piece-{piece.type}"
-        class={{
-          "pointer-events-none": selectedPiece !== null,
-          "transition-transform duration-1000": lastSelectedPiece !== i,
-          "opacity-0": i === selectedPiece && pointerPosition !== null,
-        }}
+        pointer-events={selectedPiece === null ? "" : "none"}
+        opacity={i === selectedPiece ? 0 : 1}
+        class={{animate: lastSelectedPiece !== i}}
         onpointerdown={e => handlePointerDown(i, e)}
         filter="drop-shadow(16px 16px 16px gray)"
       />
@@ -203,14 +200,14 @@
         href="#twice"
         width="50"
         height="50"
-        class={{"opacity-0": !ownBothPieces(i, 0)}}
+        opacity={ownBothPieces(i, 0) ? 1 : 0}
         style:transform="translate(140px, {1610 - 200 * j}px)"
       />
       <use
         href="#twice"
         width="50"
         height="50"
-        class={{"opacity-0": !ownBothPieces(i, 1)}}
+        opacity={ownBothPieces(i, 0) ? 1 : 0}
         style:transform="translate(1540px, {240 + 200 * j}px)"
       />
     {/each}
@@ -234,3 +231,19 @@
     {/if}
   </svg>
 </div>
+
+<style>
+  svg {
+    user-select: none;
+    touch-action: none;
+  }
+
+  .container {
+    width: 42rem;
+    z-index: 20;
+  }
+
+  .animate {
+    transition: transform 600ms linear;
+  }
+</style>
