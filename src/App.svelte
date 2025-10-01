@@ -340,11 +340,11 @@
   @keyframes flip-y {
     0% { 
       opacity: 0;
-      transform: translateX(-50%) translateY(-50%) rotateY(180deg);
+      transform: translate(-50%, -50%) rotateY(180deg);
     }
     100% { 
       opacity: 1;
-      transform: translateX(-50%) translateY(-50%) rotateY(0);
+      transform: translate(-50%, -50%) rotateY(0);
     }
   }
 </style>

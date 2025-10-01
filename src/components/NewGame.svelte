@@ -27,7 +27,7 @@
   onCancel={closeDialog}
   onOk={() => newGame(config)}
 >
-  <div class="body">
+  <div class="container">
     <div class="title">Adversaire</div>
     <div class="buttons">
       {#each adversaries as [name, fullname]}
@@ -65,6 +65,7 @@
     font-weight: 500;
 
     color: rgb(55, 65, 81);
+    background-color: transparent;
 
     border: 1px solid rgb(31, 41, 55);
     &.toggled {
@@ -72,7 +73,7 @@
     }
   }
 
-  .body {
+  .container {
     display: grid;
     grid-template-columns: 25% 75%;
     gap: 2rem;

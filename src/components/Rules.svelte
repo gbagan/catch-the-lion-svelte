@@ -1,8 +1,8 @@
 <script lang="ts">
   import Dialog from "./Dialog.svelte";
-  import Emph from "./Emph.svelte"
-  type Props = { closeDialog: () => void }
-  let {closeDialog }: Props = $props();
+  import Emph from "./Emph.svelte";
+  type Props = { closeDialog: () => void };
+  let { closeDialog }: Props = $props();
 </script>
 
 <Dialog title="Règles de Catch The Lion" onOk={closeDialog}>
