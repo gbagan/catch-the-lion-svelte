@@ -4,6 +4,7 @@
   import { tutorial } from "../tutorial";
   import Emph from "./Emph.svelte";
   import { onDestroy, onMount } from "svelte";
+  import { fade } from "svelte/transition";
 
   type Props = {
     outcome: null | 0 | 1 | 2,
@@ -79,22 +80,20 @@
     ? "bg-happy"
     : "bg-speaking"
   );
-  // todo ajouter transitions
-  // ajouter les mots en gras
 </script>
 
 <div class="z-20 relative w-[15rem] h-[25rem] bg-contain bg-no-repeat {girlExpression}">
   {#if message}
-    <div class="tooltip -right-5">
+    <div class="tooltip -right-5" transition:fade={{duration: 500}}>
       {#each message as m}
         {#if typeof m === "string"}
           {m}
         {:else if m[0] === "R"}
-          {m[1]}
+          <Emph color="red">{m[1]}</Emph>
         {:else if m[0] === "G"}
-          {m[1]}
+          <Emph color="green">{m[1]}</Emph>
         {:else}
-          {m[1]}
+          <Emph color="blue">{m[1]}</Emph>
         {/if}
       {/each}
     </div>
