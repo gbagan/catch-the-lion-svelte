@@ -19,12 +19,12 @@ export default defineConfig({
         theme_color: '#0000ff',
         icons: [
           {
-            src: '/incidence/icons/icon192.png',
+            src: '/catch-the-lion/icons/icon192.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: '/incidence/icons/icon512.png',
+            src: '/catch-the-lion/icons/icon512.png',
             sizes: '512x512',
             type: 'image/png'
           },
