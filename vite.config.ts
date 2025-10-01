@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { VitePWA } from 'vite-plugin-pwa';
-import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   base: "./",
@@ -22,8 +21,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,webm,webp}']
       }
-    }),
-    tailwindcss(),
+    })
   ],
   worker: {
   },
